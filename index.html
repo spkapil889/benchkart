@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Benchkart Header + Mega Menu + Footer</title>
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --surface:#ffffff;
+      --muted:#6b7280;
+      --text:#0f172a;
+      --border:#e5e7eb;
+      --shadow: 0 18px 50px rgba(2,8,23,.12);
+      --shadow-sm: 0 10px 24px rgba(2,8,23,.10);
+
+      --brand:#2563eb;         /* change to your brand */
+      --brand-2:#0ea5e9;       /* optional */
+      --btn:#0f172a;
+      --btnText:#ffffff;
+
+      --radius:14px;
+      --radiusSm:12px;
+
+      --container: 1500px;
+      --headerH: 84px;
+
+      --gap: 18px;
+      --focus: 0 0 0 3px rgba(37,99,235,.25);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font: 15px/1.4 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background: #f8fafc;
+    }
+    a{ color:inherit; text-decoration:none; }
+    button{ font:inherit; }
+
+    /* Container */
+    .container{
+      width:min(var(--container), calc(100% - 28px));
+      margin-inline:auto;
+    }
+
+    /* Header */
+    .site-header{
+      position:sticky; top:0; z-index:50;
+      background:rgba(255,255,255,.88);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .header-inner{
+      height:var(--headerH);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 20px;
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 140px;
+    }
+    .brand-mark{
+      width:40px; height:40px; border-radius:12px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: 0 10px 24px rgba(37,99,235,.25);
+    }
+    .brand-name{
+      display:flex; flex-direction:column; line-height:1.1;
+    }
+    .brand-name strong{ font-size:16px; letter-spacing:.2px; }
+    .brand-name span{ font-size:12px; color:var(--muted); }
+
+    /* Desktop nav */
+    .nav{
+      display:flex; align-items:center; justify-content:center;
+      flex: 1;
+    }
+    .nav-list{
+      display:flex; align-items:center; gap: 6px;
+      list-style:none; padding:0; margin:0;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.8);
+      border-radius: 999px;
+      padding: 6px;
+    }
+    .nav-item{ position:relative; }
+    .nav-link,
+    .nav-btn{
+      display:flex; align-items:center; gap:8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border:0;
+      background:transparent;
+      cursor:pointer;
+      color: var(--text);
+      transition: background .15s ease, color .15s ease;
+      outline:none;
+      white-space:nowrap;
+    }
+    .nav-link:hover,
+    .nav-btn:hover{
+      background:#f1f5f9;
+    }
+    .nav-link:focus-visible,
+    .nav-btn:focus-visible{ box-shadow: var(--focus); }
+
+    .chev{
+      width:14px; height:14px; display:inline-block;
+      transform: translateY(1px);
+      opacity:.8;
+    }
+    .nav-item[data-open="true"] > .nav-btn{
+      background:#eef2ff;
+      color:#1e3a8a;
+    }
+    .nav-item[data-open="true"] .chev{
+      transform: rotate(180deg) translateY(-1px);
+    }
+
+    /* Right actions */
+    .actions{
+      display:flex; align-items:center; gap:10px;
+      justify-content:flex-end;
+      min-width: 320px;
+    }
+    .link-quiet{
+      padding: 10px 10px;
+      border-radius: 10px;
+      color:var(--muted);
+    }
+    .link-quiet:hover{ background:#f1f5f9; color:var(--text); }
+    .btn{
+      border:1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #fff;
+      cursor:pointer;
+      transition: transform .08s ease, box-shadow .15s ease, background .15s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{ box-shadow: var(--shadow-sm); }
+    .btn:active{ transform: translateY(1px); }
+    .btn:focus-visible{ box-shadow: var(--focus); outline:none; }
+    .btn-primary{
+      border-color: transparent;
+      background: var(--btn);
+      color: var(--btnText);
+    }
+    .btn-primary:hover{ box-shadow: 0 14px 34px rgba(15,23,42,.22); }
+
+    /* Panels (dropdown / mega menu) */
+    .panel{
+      position:absolute;
+      left:321%;
+      transform: translateX(-50%);
+      top: calc(100% + 10px);
+      width: min(980px, calc(100vw - 48px));
+      background: var(--surface);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display:none;
+    }
+    .nav-item[data-open="true"] > .panel{ display:block; }
+
+    /* Mega menu layout */
+    .mega{
+      display:grid;
+      grid-template-columns: 1.2fr .9fr;
+      gap: 18px;
+    }
+    .mega-left{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+    }
+    .menu-card{
+      border:1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fff;
+      transition: transform .08s ease, box-shadow .15s ease;
+      min-height: 88px;
+    }
+    .menu-card:hover{ box-shadow: var(--shadow-sm); }
+    .menu-card:active{ transform: translateY(1px); }
+
+    .menu-card h4{
+      margin:0 0 6px; font-size:14px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .menu-card p{ margin:0; color:var(--muted); font-size:12px; }
+    .icon{
+      width:34px; height:34px; border-radius: 12px;
+      background: linear-gradient(135deg, #e0f2fe, #eef2ff);
+      border:1px solid var(--border);
+      display:inline-flex; align-items:center; justify-content:center;
+      color:#1e40af;
+      flex: 0 0 auto;
+      font-weight:700;
+    }
+
+    .mega-right{
+      border:1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(37,99,235,.08), rgba(14,165,233,.08));
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap: 14px;
+      min-height: 200px;
+    }
+    .mega-right strong{ font-size:14px; }
+    .mega-right p{ margin:8px 0 0; color:var(--muted); font-size:12px; }
+    .mega-cta{
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+
+    /* Simple dropdown (Resources) */
+    .dropdown{
+      width: 360px;
+      left: 50%;
+    }
+    .dropdown ul{
+      list-style:none; margin:0; padding: 6px;
+      display:flex; flex-direction:column; gap: 4px;
+    }
+    .dropdown a{
+      padding: 10px 12px;
+      border-radius: 12px;
+      display:flex; justify-content:space-between; align-items:center;
+      border:1px solid transparent;
+    }
+    .dropdown a:hover{
+      background:#f8fafc; border-color: var(--border);
+    }
+    .badge{
+      font-size:11px; color:var(--muted);
+      border:1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 999px;
+      background:#fff;
+    }
+
+    /* Mobile nav (drawer) */
+    .mobile-toggle{
+      display:none;
+      border:1px solid var(--border);
+      background:#fff;
+      width:44px; height:44px;
+      border-radius: 14px;
+      align-items:center; justify-content:center;
+      cursor:pointer;
+    }
+    .hamburger{
+      width:18px; height:12px; position:relative;
+    }
+    .hamburger span{
+      position:absolute; left:0; right:0;
+      height:2px; background:var(--text);
+      border-radius: 999px;
+    }
+    .hamburger span:nth-child(1){ top:0; }
+    .hamburger span:nth-child(2){ top:5px; opacity:.85; }
+    .hamburger span:nth-child(3){ bottom:0; opacity:.7; }
+
+    .drawer-backdrop{
+      position:fixed; inset:0;
+      background: rgba(2,8,23,.45);
+      display:none;
+      z-index:60;
+    }
+    .drawer{
+      position:fixed; top:0; right:0;
+      width: min(420px, 92vw);
+      height:100%;
+      background:#fff;
+      border-left:1px solid var(--border);
+      transform: translateX(100%);
+      transition: transform .2s ease;
+      z-index:61;
+      display:flex; flex-direction:column;
+    }
+    body.nav-open .drawer-backdrop{ display:block; }
+    body.nav-open .drawer{ transform: translateX(0); }
+
+    .drawer-head{
+      height: var(--headerH);
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 0 18px;
+      border-bottom:1px solid var(--border);
+    }
+    .drawer-body{ padding: 14px 18px; overflow:auto; }
+    .drawer-close{
+      width:44px; height:44px; border-radius: 14px;
+      border:1px solid var(--border);
+      background:#fff; cursor:pointer;
+    }
+
+    .accordion{
+      display:flex; flex-direction:column; gap: 10px;
+    }
+    .acc-item{
+      border:1px solid var(--border);
+      border-radius: 16px;
+      overflow:hidden;
+    }
+    .acc-btn{
+      width:100%;
+      display:flex; justify-content:space-between; align-items:center;
+      padding: 12px 14px;
+      background:#fff;
+      border:0;
+      cursor:pointer;
+    }
+    .acc-panel{
+      display:none;
+      border-top:1px solid var(--border);
+      padding: 10px;
+      background:#f8fafc;
+    }
+    .acc-item[data-open="true"] .acc-panel{ display:block; }
+    .acc-links a{
+      display:block;
+      padding: 10px 10px;
+      border-radius: 12px;
+    }
+    .acc-links a:hover{ background:#fff; }
+
+    .drawer-actions{
+      display:flex; gap: 10px; flex-wrap:wrap;
+      margin-top: 14px;
+    }
+    .drawer-actions .btn{ flex:1; text-align:center; }
+    .drawer-actions .btn-primary{ flex:1.4; }
+
+    /* Footer */
+    .site-footer{
+      margin-top: 60px;
+      background:#fff;
+      border-top:1px solid var(--border);
+    }
+    .footer-top{
+      padding: 44px 0 28px;
+    }
+    .footer-grid{
+      display:grid;
+      grid-template-columns: 1.3fr repeat(4, 1fr);
+      gap: 22px;
+    }
+    .footer-brand p{
+      margin: 10px 0 0;
+      color: var(--muted);
+      max-width: 340px;
+      font-size: 13px;
+    }
+    .footer-col h5{
+      margin: 0 0 10px;
+      font-size: 13px;
+      letter-spacing: .2px;
+    }
+    .footer-col a{
+      display:block;
+      padding: 8px 0;
+      color: var(--muted);
+    }
+    .footer-col a:hover{ color: var(--text); }
+
+    .footer-bottom{
+      border-top:1px solid var(--border);
+      padding: 18px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .footer-bottom-row{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+    }
+    .social{
+      display:flex; gap: 10px; align-items:center;
+    }
+    .social a{
+      width:38px; height:38px; border-radius: 12px;
+      border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      color: var(--text);
+      background:#fff;
+    }
+    .social a:hover{ box-shadow: var(--shadow-sm); }
+
+    /* Responsive */
+    @media (max-width: 1024px){
+      .actions{ min-width: 260px; }
+      .nav{ display:none; }
+      .mobile-toggle{ display:inline-flex; }
+      .actions .link-quiet{ display:none; } /* keep clean on small screens */
+    }
+    @media (max-width: 900px){
+      .footer-grid{ grid-template-columns: 1fr 1fr; }
+      .footer-brand{ grid-column: 1 / -1; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .drawer{ transition:none; }
+      .btn{ transition:none; }
+      .nav-link,.nav-btn{ transition:none; }
+    }
+
+    /* Demo page spacing */
+    main{ padding: 48px 0; }
+    .demo-card{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header" role="banner">
+    <div class="container">
+      <div class="header-inner">
+
+        <!-- Brand -->
+        <a class="brand" href="/" aria-label="Benchkart Home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-name">
+            <strong>Benchkart</strong>
+            <span>Talent & Staffing</span>
+          </span>
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="nav" aria-label="Primary">
+          <ul class="nav-list" role="menubar">
+
+            <!-- For Companies (MEGA) -->
+            <li class="nav-item" data-menu="companies" role="none">
+              <button class="nav-btn" role="menuitem" aria-haspopup="true" aria-expanded="false" aria-controls="panel-companies">
+                For Companies
+                <svg class="chev" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+
+              <div class="panel" id="panel-companies" role="menu" aria-label="For Companies menu">
+                <div class="mega">
+                  <div class="mega-left">
+                    <a class="menu-card" href="/roles/">
+                      <h4><span class="icon">R</span> Roles</h4>
+                      <p>Browse all roles/skills and role detail pages.</p>
+                    </a>
+
+                    <a class="menu-card" href="/for-companies/how-we-work/">
+                      <h4><span class="icon">W</span> How We Work</h4>
+                      <p>Our process, turnaround, and collaboration model.</p>
+                    </a>
+
+                    <a class="menu-card" href="/why-benchkart/">
+                      <h4><span class="icon">B</span> Why Benchkart</h4>
+                      <p>What makes Benchkart different and reliable.</p>
+                    </a>
+
+                    <a class="menu-card" href="/hire-talent/">
+                      <h4><span class="icon">H</span> Hire Talent</h4>
+                      <p>Start hiring — quick intake form + contact options.</p>
+                    </a>
+                  </div>
+
+                  <aside class="mega-right" aria-label="Companies CTA">
+                    <div>
+                      <strong>Need talent fast?</strong>
+                      <p>Share your requirement and we’ll respond with the next steps.</p>
+                    </div>
+                    <div class="mega-cta">
+                      <a class="btn btn-primary" href="/hire-talent/">Hire Talent</a>
+                      <a class="btn" href="/contact/?type=company">Talk to Us</a>
+                    </div>
+                  </aside>
+                </div>
+              </div>
+            </li>
+
+            <!-- For Agencies (MEGA) -->
+            <li class="nav-item" data-menu="agencies" role="none">
+              <button class="nav-btn" role="menuitem" aria-haspopup="true" aria-expanded="false" aria-controls="panel-agencies">
+                For Agencies
+                <svg class="chev" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+
+              <div class="panel" id="panel-agencies" role="menu" aria-label="For Agencies menu">
+                <div class="mega">
+                  <div class="mega-left">
+                    <a class="menu-card" href="/for-agencies/how-we-work/">
+                      <h4><span class="icon">W</span> How We Work</h4>
+                      <p>Understand the partner workflow and SLAs.</p>
+                    </a>
+
+                    <a class="menu-card" href="/for-agencies/partner-with-us/">
+                      <h4><span class="icon">P</span> Partner With Us</h4>
+                      <p>Become a Benchkart partner agency.</p>
+                    </a>
+
+                    <a class="menu-card" href="/submit-candidate/">
+                      <h4><span class="icon">S</span> Submit a Candidate</h4>
+                      <p>Submit candidate profile via form.</p>
+                    </a>
+
+                    <a class="menu-card" href="/contact/?type=agency">
+                      <h4><span class="icon">C</span> Contact</h4>
+                      <p>Have questions? Reach out to the team.</p>
+                    </a>
+                  </div>
+
+                  <aside class="mega-right" aria-label="Agencies CTA">
+                    <div>
+                      <strong>Ready to partner?</strong>
+                      <p>Submit details and we’ll onboard you with the right process.</p>
+                    </div>
+                    <div class="mega-cta">
+                      <a class="btn btn-primary" href="/for-agencies/partner-with-us/">Partner With Us</a>
+                      <a class="btn" href="/submit-candidate/">Submit Candidate</a>
+                    </div>
+                  </aside>
+                </div>
+              </div>
+            </li>
+
+            <!-- Solutions -->
+            <li class="nav-item" role="none">
+              <a class="nav-link" role="menuitem" href="/solutions/">Our Solutions</a>
+            </li>
+
+            <!-- Success Stories -->
+            <li class="nav-item" role="none">
+              <a class="nav-link" role="menuitem" href="/case-studies/">Success Stories</a>
+            </li>
+
+            <!-- Resources (Dropdown) -->
+            <li class="nav-item" data-menu="resources" role="none">
+              <button class="nav-btn" role="menuitem" aria-haspopup="true" aria-expanded="false" aria-controls="panel-resources">
+                Resources
+                <svg class="chev" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+
+              <div class="panel dropdown" id="panel-resources" role="menu" aria-label="Resources menu">
+                <ul>
+                  <li><a href="/blog/">Blogs <span class="badge">Insights</span></a></li>
+                  <li><a href="/case-studies/">Case Studies <span class="badge">Results</span></a></li>
+                  <li><a href="/sitemap/">Sitemap <span class="badge">All pages</span></a></li>
+                </ul>
+              </div>
+            </li>
+
+            <!-- About -->
+            <li class="nav-item" role="none">
+              <a class="nav-link" role="menuitem" href="/about/">About</a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Actions -->
+        <div class="actions">
+          <a class="link-quiet" href="/apply-as-talent/">Apply as a Talent</a>
+          <a class="btn" href="/submit-candidate/">Submit a Candidate</a>
+          <a class="btn btn-primary" href="/hire-talent/">Hire Talent</a>
+
+          <!-- Mobile toggle -->
+          <button class="mobile-toggle" type="button" aria-label="Open menu" id="openDrawer">
+            <span class="hamburger" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE DRAWER -->
+  <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+
+  <aside class="drawer" id="drawer" aria-label="Mobile menu" aria-hidden="true">
+    <div class="drawer-head">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="brand-mark" aria-hidden="true" style="width:34px;height:34px;border-radius:12px;"></span>
+        <strong>Benchkart</strong>
+      </div>
+      <button class="drawer-close" type="button" aria-label="Close menu" id="closeDrawer">✕</button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="accordion">
+
+        <div class="acc-item" data-acc="companies">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            For Companies
+            <span aria-hidden="true">▾</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-links">
+              <a href="/roles/">Roles</a>
+              <a href="/for-companies/how-we-work/">How We Work</a>
+              <a href="/why-benchkart/">Why Benchkart</a>
+              <a href="/hire-talent/">Hire Talent</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item" data-acc="agencies">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            For Agencies
+            <span aria-hidden="true">▾</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-links">
+              <a href="/for-agencies/how-we-work/">How We Work</a>
+              <a href="/for-agencies/partner-with-us/">Partner With Us</a>
+              <a href="/submit-candidate/">Submit a Candidate</a>
+              <a href="/contact/?type=agency">Contact</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <a class="acc-btn" href="/solutions/">Our Solutions <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="acc-item">
+          <a class="acc-btn" href="/case-studies/">Success Stories <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="acc-item" data-acc="resources">
+          <button class="acc-btn" type="button" aria-expanded="false">
+            Resources
+            <span aria-hidden="true">▾</span>
+          </button>
+          <div class="acc-panel">
+            <div class="acc-links">
+              <a href="/blog/">Blogs</a>
+              <a href="/case-studies/">Case Studies</a>
+              <a href="/sitemap/">Sitemap</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <a class="acc-btn" href="/about/">About <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="acc-item">
+          <a class="acc-btn" href="/global-offices/">Global Offices <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="acc-item">
+          <a class="acc-btn" href="/contact/">Contact <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="drawer-actions">
+          <a class="btn" href="/apply-as-talent/">Apply as a Talent</a>
+          <a class="btn" href="/submit-candidate/">Submit a Candidate</a>
+          <a class="btn btn-primary" href="/hire-talent/">Hire Talent</a>
+        </div>
+
+      </div>
+    </div>
+  </aside>
+
+  <!-- DEMO MAIN -->
+  <main>
+    <div class="container">
+      <div class="demo-card">
+        <h2 style="margin:0 0 10px;">Page Content</h2>
+        <p style="margin:0;color:var(--muted);">Scroll + test mega menu, dropdown, and mobile drawer.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="brand-mark" aria-hidden="true"></span>
+              <div>
+                <strong style="display:block;font-size:16px;">Benchkart</strong>
+                <span style="color:var(--muted);font-size:12px;">Talent & Staffing</span>
+              </div>
+            </div>
+            <p>
+              Benchkart connects companies and agencies with high-quality talent through a fast,
+              transparent process focused on outcomes.
+            </p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+              <a class="btn" href="/global-offices/">Global Offices</a>
+              <a class="btn btn-primary" href="/contact/">Contact</a>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h5>About</h5>
+            <a href="/about/">About Benchkart</a>
+            <a href="/about/leadership/">Leadership Team</a>
+            <a href="/about/group-company/">Our Group Company</a>
+            <a href="/about/accolades/">Our Accolades</a>
+            <a href="/careers/">Career at BK</a>
+          </div>
+
+          <div class="footer-col">
+            <h5>For Companies</h5>
+            <a href="/roles/">Roles</a>
+            <a href="/for-companies/how-we-work/">How We Work</a>
+            <a href="/why-benchkart/">Why Benchkart</a>
+            <a href="/hire-talent/">Hire Talent</a>
+          </div>
+
+          <div class="footer-col">
+            <h5>For Agencies</h5>
+            <a href="/for-agencies/how-we-work/">How We Work</a>
+            <a href="/for-agencies/partner-with-us/">Partner With Us</a>
+            <a href="/submit-candidate/">Submit a Candidate</a>
+            <a href="/apply-as-talent/">Apply as a Talent</a>
+          </div>
+
+          <div class="footer-col">
+            <h5>Legal</h5>
+            <a href="/policies/terms-for-clients/">Terms (Clients)</a>
+            <a href="/policies/terms-for-partners/">Terms (Partners)</a>
+            <a href="/policies/cookie-policy/">Cookie Policy</a>
+            <a href="/policies/privacy-policy/">Privacy Policy</a>
+            <a href="/policies/code-of-conduct/">Code of Conduct</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-bottom-row">
+          <div>© <span id="year"></span> Benchkart. All rights reserved.</div>
+
+          <div class="social" aria-label="Social links">
+            <a href="#" aria-label="LinkedIn">in</a>
+            <a href="#" aria-label="Twitter / X">x</a>
+            <a href="#" aria-label="YouTube">▶</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ====== Desktop dropdown / mega menu (accessible) ======
+    (function(){
+      const DESKTOP_MIN = 1025; // matches CSS breakpoint
+      const items = Array.from(document.querySelectorAll('.nav-item[data-menu]'));
+
+      function isDesktop(){
+        return window.innerWidth >= DESKTOP_MIN;
+      }
+
+      function closeAll(except){
+        items.forEach(li => {
+          if (li === except) return;
+          li.dataset.open = "false";
+          const btn = li.querySelector('.nav-btn');
+          if (btn) btn.setAttribute('aria-expanded','false');
+        });
+      }
+
+      function openItem(li){
+        li.dataset.open = "true";
+        const btn = li.querySelector('.nav-btn');
+        if (btn) btn.setAttribute('aria-expanded','true');
+      }
+
+      function toggleItem(li){
+        const open = li.dataset.open === "true";
+        if (open) {
+          li.dataset.open = "false";
+          li.querySelector('.nav-btn')?.setAttribute('aria-expanded','false');
+        } else {
+          closeAll(li);
+          openItem(li);
+        }
+      }
+
+      // Init state
+      items.forEach(li => li.dataset.open = "false");
+
+      // Click to toggle (desktop + touch)
+      items.forEach(li => {
+        const btn = li.querySelector('.nav-btn');
+        const panel = li.querySelector('.panel');
+
+        btn?.addEventListener('click', (e) => {
+          // On mobile, desktop nav hidden anyway; safe to keep.
+          toggleItem(li);
+          e.stopPropagation();
+        });
+
+        // Hover open (desktop)
+        li.addEventListener('mouseenter', () => {
+          if (!isDesktop()) return;
+          closeAll(li);
+          openItem(li);
+        });
+        li.addEventListener('mouseleave', () => {
+          if (!isDesktop()) return;
+          li.dataset.open = "false";
+          btn?.setAttribute('aria-expanded','false');
+        });
+
+        // Keep open when focusing inside (keyboard)
+        panel?.addEventListener('focusin', () => {
+          if (!isDesktop()) return;
+          closeAll(li);
+          openItem(li);
+        });
+      });
+
+      // Close on outside click
+      document.addEventListener('click', () => closeAll());
+
+      // Close on ESC
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAll();
+      });
+
+      // Close menus if resizing to mobile
+      window.addEventListener('resize', () => closeAll());
+    })();
+
+    // ====== Mobile drawer ======
+    (function(){
+      const openBtn = document.getElementById('openDrawer');
+      const closeBtn = document.getElementById('closeDrawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      const drawer = document.getElementById('drawer');
+
+      function openDrawer(){
+        document.body.classList.add('nav-open');
+        drawer.setAttribute('aria-hidden','false');
+        backdrop.setAttribute('aria-hidden','false');
+      }
+      function closeDrawer(){
+        document.body.classList.remove('nav-open');
+        drawer.setAttribute('aria-hidden','true');
+        backdrop.setAttribute('aria-hidden','true');
+      }
+
+      openBtn?.addEventListener('click', openDrawer);
+      closeBtn?.addEventListener('click', closeDrawer);
+      backdrop?.addEventListener('click', closeDrawer);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeDrawer();
+      });
+
+      // Accordion
+      const accItems = Array.from(document.querySelectorAll('.acc-item[data-acc]'));
+      accItems.forEach(item => {
+        item.dataset.open = "false";
+        const btn = item.querySelector('.acc-btn');
+        btn?.addEventListener('click', () => {
+          const open = item.dataset.open === "true";
+          // close others (optional)
+          accItems.forEach(x => {
+            if (x !== item){
+              x.dataset.open = "false";
+              x.querySelector('.acc-btn')?.setAttribute('aria-expanded','false');
+            }
+          });
+          item.dataset.open = open ? "false" : "true";
+          btn.setAttribute('aria-expanded', open ? "false" : "true");
+        });
+      });
+    })();
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+</body>
+</html>
